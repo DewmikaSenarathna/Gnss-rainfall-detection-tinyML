@@ -190,5 +190,4 @@ This project is developed as part of an academic course and is not intended for 
 
 ---
 
-"# Gnss-rainfall-detection-tinyML" 
-"# Gnss-rainfall-detection-tinyML" 
+
