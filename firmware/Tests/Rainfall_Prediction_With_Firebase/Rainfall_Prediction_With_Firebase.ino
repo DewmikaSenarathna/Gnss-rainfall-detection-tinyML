@@ -18,7 +18,7 @@ SoftwareSerial espSerial(10,9);
 
 #define RAIN_SENSOR A0
 
-String firebaseHost = "YOUR_FIREBASE_HOST";
+String firebaseHost = "";
 
 int snrValues[20];
 int snrCount = 0;
