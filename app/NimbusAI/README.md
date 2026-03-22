@@ -2,4 +2,3 @@
 
 NimbusAI rainfall intelligence dashboard.
 
-
