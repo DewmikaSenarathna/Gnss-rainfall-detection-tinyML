@@ -4,11 +4,11 @@
 #include <time.h>
 
 // ===== WIFI =====
-const char* ssid = "DD";
-const char* password = "dondew2799";
+const char* ssid = "";
+const char* password = "";
 
 // ===== FIREBASE HOST =====
-const char* host = "rainfallprediction-945cd-default-rtdb.asia-southeast1.firebasedatabase.app";
+const char* host = "";
 
 // ===== SENSOR VARIABLES =====
 float temperature = 0;
