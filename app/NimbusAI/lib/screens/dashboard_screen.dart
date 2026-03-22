@@ -24,8 +24,31 @@ class _DashboardScreenState extends State<DashboardScreen> {
         databaseURL: _databaseUrl,
       ).ref('RainData');
 
-  Future<void> _reloadData() async {
-    setState(() {});
+  late final Stream<SensorData> _sensorStream =
+      _ref.limitToLast(1).onValue.map(_mapEventToSensorData);
+
+  @override
+  void initState() {
+    super.initState();
+  }
+
+  SensorData _mapEventToSensorData(DatabaseEvent event) {
+    final value = event.snapshot.value;
+
+    if (value == null) {
+      throw Exception('No data found at RainData.');
+    }
+
+    if (value is! Map) {
+      throw Exception('Unexpected RainData format.');
+    }
+
+    final latest = _extractLatestRecord(_toStringKeyMap(value));
+    if (latest == null) {
+      throw Exception('RainData contains no valid records.');
+    }
+
+    return SensorData.fromJson(latest);
   }
 
   Map<String, dynamic> _toStringKeyMap(Map<dynamic, dynamic> source) {
@@ -37,21 +60,6 @@ class _DashboardScreenState extends State<DashboardScreen> {
   }
 
   Map<String, dynamic>? _extractLatestRecord(Map<String, dynamic> rainData) {
-    final latestRaw = rainData['latest'];
-    if (latestRaw is Map) {
-      final latest = _toStringKeyMap(latestRaw);
-      return _isRecordMap(latest) ? latest : null;
-    }
-
-    final historyRaw = rainData['history'];
-    if (historyRaw is Map) {
-      final historyMap = _toStringKeyMap(historyRaw);
-      final fromHistory = _extractLatestRecord(historyMap);
-      if (fromHistory != null) {
-        return fromHistory;
-      }
-    }
-
     if (_isRecordMap(rainData)) {
       return rainData;
     }
@@ -97,76 +105,54 @@ class _DashboardScreenState extends State<DashboardScreen> {
         children: [
           const _Backdrop(),
           SafeArea(
-            child: RefreshIndicator(
-              onRefresh: _reloadData,
-              child: ListView(
-                physics: const AlwaysScrollableScrollPhysics(),
-                padding: const EdgeInsets.fromLTRB(16, 18, 16, 28),
-                children: [
-                  const _Header(),
-                  const SizedBox(height: 18),
-                  StreamBuilder<DatabaseEvent>(
-                    stream: _ref.onValue,
-                    builder: (context, snapshot) {
-                      if (snapshot.connectionState == ConnectionState.waiting) {
-                        return const Padding(
-                          padding: EdgeInsets.only(top: 120),
-                          child: Center(child: CircularProgressIndicator()),
-                        );
-                      }
-
-                      if (snapshot.hasError) {
-                        return _ErrorState(
-                          onRetry: _reloadData,
-                          message: snapshot.error.toString(),
-                        );
-                      }
-
-                      final raw = snapshot.data?.snapshot.value;
-                      if (raw == null || raw is! Map) {
-                        return _ErrorState(
-                          onRetry: _reloadData,
-                          message: 'No sensor payload returned from Firebase.',
-                        );
-                      }
-
-                      final latest = _extractLatestRecord(_toStringKeyMap(raw));
-                      if (latest == null) {
-                        return _ErrorState(
-                          onRetry: _reloadData,
-                          message: 'RainData contains no valid realtime record.',
-                        );
-                      }
-
-                      final data = SensorData.fromJson(latest);
-
-                      return TweenAnimationBuilder<double>(
-                        duration: const Duration(milliseconds: 650),
-                        curve: Curves.easeOutCubic,
-                        tween: Tween(begin: 0, end: 1),
-                        builder: (context, value, child) {
-                          return Opacity(
-                            opacity: value,
-                            child: Transform.translate(
-                              offset: Offset(0, (1 - value) * 12),
-                              child: child,
-                            ),
-                          );
-                        },
-                        child: _DashboardContent(data: data),
+            child: ListView(
+              physics: const AlwaysScrollableScrollPhysics(),
+              padding: const EdgeInsets.fromLTRB(16, 18, 16, 28),
+              children: [
+                const _Header(),
+                const SizedBox(height: 18),
+                StreamBuilder<SensorData>(
+                  stream: _sensorStream,
+                  builder: (context, snapshot) {
+                    if (snapshot.connectionState == ConnectionState.waiting) {
+                      return const Padding(
+                        padding: EdgeInsets.only(top: 120),
+                        child: Center(child: CircularProgressIndicator()),
                       );
-                    },
-                  ),
-                ],
-              ),
+                    }
+
+                    if (snapshot.hasError) {
+                      return _ErrorState(message: snapshot.error.toString());
+                    }
+
+                    final data = snapshot.data;
+                    if (data == null) {
+                      return const _ErrorState(
+                        message: 'Waiting for live sensor payload from Firebase.',
+                      );
+                    }
+
+                    return TweenAnimationBuilder<double>(
+                      duration: const Duration(milliseconds: 650),
+                      curve: Curves.easeOutCubic,
+                      tween: Tween(begin: 0, end: 1),
+                      builder: (context, value, child) {
+                        return Opacity(
+                          opacity: value,
+                          child: Transform.translate(
+                            offset: Offset(0, (1 - value) * 12),
+                            child: child,
+                          ),
+                        );
+                      },
+                      child: _DashboardContent(data: data),
+                    );
+                  },
+                ),
+              ],
             ),
           ),
         ],
-      ),
-      floatingActionButton: FloatingActionButton.extended(
-        onPressed: () async => _reloadData(),
-        icon: const Icon(Icons.sync),
-        label: const Text('Refresh Data'),
       ),
     );
   }
@@ -326,7 +312,7 @@ class _StatusCard extends StatelessWidget {
                 _badge('Station A-01'),
                 const Spacer(),
                 Text(
-                  'Intensity ${data.rainIntensity.toStringAsFixed(2)}',
+                  'Intensity ${data.rainIntensity.toStringAsFixed(3)}',
                   style: textTheme.bodyMedium?.copyWith(
                     color: const Color(0xFF3C5063),
                     fontWeight: FontWeight.w600,
@@ -334,6 +320,15 @@ class _StatusCard extends StatelessWidget {
                 ),
               ],
             ),
+            if (data.createdAt.isNotEmpty) ...[
+              const SizedBox(height: 6),
+              Text(
+                'Updated ${data.createdAt}  •  Model v${data.modelVersion}',
+                style: textTheme.bodySmall?.copyWith(
+                  color: const Color(0xFF5D6A7A),
+                ),
+              ),
+            ],
             const SizedBox(height: 14),
             Row(
               children: [
@@ -415,8 +410,11 @@ class _MetricGrid extends StatelessWidget {
     final metrics = [
       _MetricItem('Temperature', '${data.temperature.toStringAsFixed(1)} C', Icons.thermostat),
       _MetricItem('Humidity', '${data.humidity.toStringAsFixed(1)} %', Icons.water_drop),
-      _MetricItem('SNR', data.snr.toStringAsFixed(2), Icons.graphic_eq),
-      _MetricItem('Rain Intensity', data.rainIntensity.toStringAsFixed(2), Icons.grain),
+      _MetricItem('SNR Avg', data.snr.toStringAsFixed(2), Icons.graphic_eq),
+      _MetricItem('SNR Max', data.maxSnr.toString(), Icons.network_check),
+      _MetricItem('SNR Samples', data.snrSamples.toString(), Icons.scatter_plot),
+      _MetricItem('Rain Intensity', data.rainIntensity.toStringAsFixed(3), Icons.grain),
+      _MetricItem('Rain ADC', data.rainSensorAdc.toString(), Icons.speed),
     ];
 
     return LayoutBuilder(
@@ -592,9 +590,8 @@ class _TrendCard extends StatelessWidget {
 }
 
 class _ErrorState extends StatelessWidget {
-  const _ErrorState({required this.onRetry, required this.message});
+  const _ErrorState({required this.message});
 
-  final Future<void> Function() onRetry;
   final String message;
 
   @override
@@ -619,12 +616,6 @@ class _ErrorState extends StatelessWidget {
               message,
               textAlign: TextAlign.center,
               style: Theme.of(context).textTheme.bodyMedium,
-            ),
-            const SizedBox(height: 12),
-            FilledButton.icon(
-              onPressed: () => onRetry(),
-              icon: const Icon(Icons.refresh),
-              label: const Text('Retry'),
             ),
           ],
         ),
