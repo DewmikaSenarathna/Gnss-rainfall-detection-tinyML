@@ -3,7 +3,7 @@ import 'package:http/http.dart' as http;
 import '../models/sensor_data.dart';
 
 class ApiService {
-  static final Uri _endpoint = Uri.parse('http://10.19.40.192/data');
+  static final Uri _endpoint = Uri.parse('http://10.77.89.192/data');
   static const Duration _requestTimeout = Duration(seconds: 8);
 
   Future<SensorData> fetchData() async {

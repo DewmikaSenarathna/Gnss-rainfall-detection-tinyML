@@ -13,7 +13,7 @@ class RainApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-      title: 'NimbusAI',
+      title: 'Rainfall Monitoring',
       theme: AppTheme.lightTheme,
       home: const DashboardScreen(),
     );
