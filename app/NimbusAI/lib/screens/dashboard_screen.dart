@@ -157,33 +157,21 @@ class _Header extends StatelessWidget {
     return Row(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Container(
+        SizedBox(
           width: 64,
           height: 64,
-          padding: const EdgeInsets.all(10),
-          decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(16),
-            gradient: const LinearGradient(
-              colors: [Color(0xFF0D486D), Color(0xFF257A91)],
-              begin: Alignment.topLeft,
-              end: Alignment.bottomRight,
-            ),
-            boxShadow: const [
-              BoxShadow(
-                color: Color(0x2B0D486D),
-                blurRadius: 18,
-                offset: Offset(0, 8),
-              ),
-            ],
+          child: Image.asset(
+            'assets/images/app_icon.png',
+            fit: BoxFit.contain,
+            filterQuality: FilterQuality.high,
           ),
-          child: Image.asset('assets/images/rain.png', color: Colors.white),
         ),
         const SizedBox(width: 12),
         Expanded(
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text('Rainfall Intelligence', style: textTheme.titleLarge),
+              Text('NimbusAI', style: textTheme.titleLarge),
               const SizedBox(height: 4),
               Text(
                 'Creative meteorological dashboard for formal station reporting',
