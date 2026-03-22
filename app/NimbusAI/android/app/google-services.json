@@ -1,0 +1,30 @@
+{
+  "project_info": {
+    "project_number": "291738417936",
+    "firebase_url": "https://rainfallprediction-945cd-default-rtdb.asia-southeast1.firebasedatabase.app",
+    "project_id": "rainfallprediction-945cd",
+    "storage_bucket": "rainfallprediction-945cd.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:291738417936:android:bab1c73dcdda7721b74395",
+        "android_client_info": {
+          "package_name": "com.example.rainfall_monitor_app"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDgzIey0daOp9R3wuBVWc7RYXIkki-rQYw"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
