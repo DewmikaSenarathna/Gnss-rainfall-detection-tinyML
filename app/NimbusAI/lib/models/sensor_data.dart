@@ -2,17 +2,27 @@ class SensorData {
   final double temperature;
   final double humidity;
   final double snr;
+  final int maxSnr;
+  final int snrSamples;
   final double rainIntensity;
+  final int rainSensorAdc;
   final int rainLevel;
   final String prediction;
+  final int modelVersion;
+  final String createdAt;
 
   SensorData({
     required this.temperature,
     required this.humidity,
     required this.snr,
+    required this.maxSnr,
+    required this.snrSamples,
     required this.rainIntensity,
+    required this.rainSensorAdc,
     required this.rainLevel,
     required this.prediction,
+    required this.modelVersion,
+    required this.createdAt,
   });
 
   factory SensorData.fromJson(Map<String, dynamic> json) {
@@ -26,11 +36,16 @@ class SensorData {
       temperature: _readDouble(json['temperature'] ?? json['temperatur']),
       humidity: _readDouble(json['humidity']),
       snr: _readDouble(json['snr'] ?? json['maxSNR'] ?? json['max_snr']),
+      maxSnr: _readInt(json['maxSNR'] ?? json['max_snr']),
+      snrSamples: _readInt(json['snrSamples'] ?? json['snr_samples']),
       rainIntensity: _readDouble(
         json['rain_intensity'] ?? json['rainValue'] ?? json['rain_sensor'],
       ),
+      rainSensorAdc: _readInt(json['rain_sensor_adc'] ?? json['rain_adc']),
       rainLevel: rainLevel,
       prediction: prediction,
+      modelVersion: _readInt(json['model_version'] ?? json['modelVersion']),
+      createdAt: _readString(json['created_at'] ?? json['createdAt']),
     );
   }
 
@@ -72,5 +87,12 @@ class SensorData {
       default:
         return 'Unknown';
     }
+  }
+
+  static String _readString(dynamic value) {
+    if (value == null) {
+      return '';
+    }
+    return value.toString();
   }
 }
