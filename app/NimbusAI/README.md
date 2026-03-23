@@ -28,24 +28,6 @@ Main dashboard outputs:
 - lib/services/api_service.dart: sensor API service
 - lib/config/app_config.dart: environment-based runtime configuration
 
-## Configuration
-
-This repository is prepared for public publishing.
-
-Sensitive or environment-specific values are externalized through runtime defines.
-
-Reference file:
-- .env.example
-
-Local-only file (ignored by git):
-- .env
-
-Firebase local-only file (ignored by git):
-- android/app/google-services.json
-
-Template for onboarding:
-- android/app/google-services.json.example
-
 ## Run Locally
 
 1. Install dependencies:
@@ -54,30 +36,10 @@ flutter pub get
 
 2. Add local Firebase file:
 
-- Copy android/app/google-services.json.example to android/app/google-services.json
-- Replace placeholder values using your Firebase project values
-
 3. Run app:
 
 flutter run
 
-Optional runtime override using dart defines:
-
-flutter run --dart-define=FIREBASE_DATABASE_URL=https://your-db-url --dart-define=SENSOR_API_ENDPOINTS=http://192.168.1.100/data,http://192.168.4.1/data
-
 ## Build APK
 
 flutter build apk
-
-## Publish Checklist
-
-- Keep .env out of version control (already ignored)
-- Keep android/app/google-services.json out of version control (already ignored)
-- Verify Firebase rules for production access
-- Confirm package name and app signing configs
-- Replace sample endpoints with your deployment endpoint values
-- Confirm README and screenshots are up to date
-
-## License
-
-Add your preferred license before publishing.
