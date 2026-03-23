@@ -1,28 +1,53 @@
 import 'dart:convert';
+import 'dart:async';
 import 'package:http/http.dart' as http;
+
+import '../config/app_config.dart';
 import '../models/sensor_data.dart';
 
 class ApiService {
-  static final Uri _endpoint = Uri.parse('http://10.19.40.192/data');
-  static const Duration _requestTimeout = Duration(seconds: 8);
+  static final List<Uri> _endpoints = AppConfig.sensorApiEndpoints
+      .split(',')
+      .map((value) => value.trim())
+      .where((value) => value.isNotEmpty)
+      .map(Uri.parse)
+      .toList(growable: false);
+  static const Duration _requestTimeout = Duration(seconds: 10);
+  static const int _maxAttempts = 2;
 
   Future<SensorData> fetchData() async {
-    try {
-      final response = await http.get(_endpoint).timeout(_requestTimeout);
+    Object? lastError;
 
-      if (response.statusCode == 200) {
-        final dynamic decoded = json.decode(response.body);
-        if (decoded is! Map<String, dynamic>) {
-          throw const FormatException('Unexpected API response format.');
+    for (var attempt = 1; attempt <= _maxAttempts; attempt++) {
+      for (final endpoint in _endpoints) {
+        try {
+          final response = await http.get(endpoint).timeout(_requestTimeout);
+
+          if (response.statusCode == 200) {
+            final dynamic decoded = json.decode(response.body);
+            if (decoded is! Map<String, dynamic>) {
+              throw const FormatException('Unexpected API response format.');
+            }
+            return SensorData.fromJson(decoded);
+          }
+
+          throw Exception('API error (${response.statusCode}) from $endpoint.');
+        } on TimeoutException {
+          lastError = Exception(
+            'Timeout while contacting sensor endpoint $endpoint.',
+          );
+        } on FormatException {
+          rethrow;
+        } on Exception catch (error) {
+          lastError = error;
         }
-        return SensorData.fromJson(decoded);
       }
 
-      throw Exception('API error (${response.statusCode}).');
-    } on FormatException {
-      rethrow;
-    } on Exception catch (error) {
-      throw Exception('Failed to fetch sensor data: $error');
+      if (attempt < _maxAttempts) {
+        await Future<void>.delayed(const Duration(seconds: 1));
+      }
     }
+
+    throw Exception('Failed to fetch sensor data: $lastError');
   }
 }

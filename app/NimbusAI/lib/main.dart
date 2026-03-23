@@ -8,7 +8,6 @@ void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
   if (Firebase.apps.isEmpty) {
-    // On Android/iOS, use native Firebase config files.
     await Firebase.initializeApp();
   }
 
