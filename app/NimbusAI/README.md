@@ -2,8 +2,6 @@
 
 NimbusAI is a Flutter-based rainfall monitoring dashboard that visualizes realtime weather station data and rainfall prediction status from Firebase Realtime Database.
 
-<<<<<<< Updated upstream
-=======
 ## Overview
 
 NimbusAI is designed for environmental monitoring workflows where fast visibility of station readings is required.
@@ -99,4 +97,3 @@ flutter build apk
 ## License
 
 Add your preferred license before publishing.
->>>>>>> Stashed changes
