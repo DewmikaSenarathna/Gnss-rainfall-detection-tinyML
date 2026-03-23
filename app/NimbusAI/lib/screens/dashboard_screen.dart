@@ -2,9 +2,10 @@ import 'dart:math' as math;
 
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
+import 'package:firebase_core/firebase_core.dart';
+import 'package:firebase_database/firebase_database.dart';
 
 import '../models/sensor_data.dart';
-import '../services/api_service.dart';
 
 class DashboardScreen extends StatefulWidget {
   const DashboardScreen({super.key});
@@ -14,24 +15,87 @@ class DashboardScreen extends StatefulWidget {
 }
 
 class _DashboardScreenState extends State<DashboardScreen> {
-  final ApiService _api = ApiService();
-  late Future<SensorData> _sensorData;
+  static const String _databaseUrl =
+      'https://rainfallprediction-945cd-default-rtdb.asia-southeast1.firebasedatabase.app';
+
+  late final DatabaseReference _ref =
+      FirebaseDatabase.instanceFor(
+        app: Firebase.app(),
+        databaseURL: _databaseUrl,
+      ).ref('RainData');
+
+  late final Stream<SensorData> _sensorStream =
+      _ref.limitToLast(1).onValue.map(_mapEventToSensorData);
 
   @override
   void initState() {
     super.initState();
-    _sensorData = _api.fetchData();
   }
 
-  Future<void> _reloadData() async {
-    setState(() {
-      _sensorData = _api.fetchData();
-    });
-    try {
-      await _sensorData;
-    } catch (_) {
-      // Errors are intentionally shown by FutureBuilder.
+  SensorData _mapEventToSensorData(DatabaseEvent event) {
+    final value = event.snapshot.value;
+
+    if (value == null) {
+      throw Exception('No data found at RainData.');
     }
+
+    if (value is! Map) {
+      throw Exception('Unexpected RainData format.');
+    }
+
+    final latest = _extractLatestRecord(_toStringKeyMap(value));
+    if (latest == null) {
+      throw Exception('RainData contains no valid records.');
+    }
+
+    return SensorData.fromJson(latest);
+  }
+
+  Map<String, dynamic> _toStringKeyMap(Map<dynamic, dynamic> source) {
+    final mapped = <String, dynamic>{};
+    for (final entry in source.entries) {
+      mapped[entry.key.toString()] = entry.value;
+    }
+    return mapped;
+  }
+
+  Map<String, dynamic>? _extractLatestRecord(Map<String, dynamic> rainData) {
+    if (_isRecordMap(rainData)) {
+      return rainData;
+    }
+
+    final records = <MapEntry<String, dynamic>>[];
+    for (final entry in rainData.entries) {
+      if (entry.value is Map) {
+        records.add(MapEntry(entry.key, entry.value));
+      }
+    }
+
+    if (records.isEmpty) {
+      return null;
+    }
+
+    records.sort((a, b) {
+      final aNum = int.tryParse(a.key);
+      final bNum = int.tryParse(b.key);
+      if (aNum != null && bNum != null) {
+        return aNum.compareTo(bNum);
+      }
+      return a.key.compareTo(b.key);
+    });
+
+    final latestRaw = records.last.value;
+    if (latestRaw is! Map) {
+      return null;
+    }
+
+    final latest = _toStringKeyMap(latestRaw);
+    return _isRecordMap(latest) ? latest : null;
+  }
+
+  bool _isRecordMap(Map<String, dynamic> data) {
+    return data.containsKey('humidity') &&
+        (data.containsKey('temperature') || data.containsKey('temperatur'));
   }
 
   @override
@@ -41,60 +105,54 @@ class _DashboardScreenState extends State<DashboardScreen> {
         children: [
           const _Backdrop(),
           SafeArea(
-            child: RefreshIndicator(
-              onRefresh: _reloadData,
-              child: ListView(
-                physics: const AlwaysScrollableScrollPhysics(),
-                padding: const EdgeInsets.fromLTRB(16, 18, 16, 28),
-                children: [
-                  const _Header(),
-                  const SizedBox(height: 18),
-                  FutureBuilder<SensorData>(
-                    future: _sensorData,
-                    builder: (context, snapshot) {
-                      if (snapshot.connectionState == ConnectionState.waiting) {
-                        return const Padding(
-                          padding: EdgeInsets.only(top: 120),
-                          child: Center(child: CircularProgressIndicator()),
-                        );
-                      }
-
-                      if (snapshot.hasError) {
-                        return _ErrorState(onRetry: _reloadData);
-                      }
-
-                      final data = snapshot.data;
-                      if (data == null) {
-                        return _ErrorState(onRetry: _reloadData);
-                      }
-
-                      return TweenAnimationBuilder<double>(
-                        duration: const Duration(milliseconds: 650),
-                        curve: Curves.easeOutCubic,
-                        tween: Tween(begin: 0, end: 1),
-                        builder: (context, value, child) {
-                          return Opacity(
-                            opacity: value,
-                            child: Transform.translate(
-                              offset: Offset(0, (1 - value) * 12),
-                              child: child,
-                            ),
-                          );
-                        },
-                        child: _DashboardContent(data: data),
+            child: ListView(
+              physics: const AlwaysScrollableScrollPhysics(),
+              padding: const EdgeInsets.fromLTRB(16, 18, 16, 28),
+              children: [
+                const _Header(),
+                const SizedBox(height: 18),
+                StreamBuilder<SensorData>(
+                  stream: _sensorStream,
+                  builder: (context, snapshot) {
+                    if (snapshot.connectionState == ConnectionState.waiting) {
+                      return const Padding(
+                        padding: EdgeInsets.only(top: 120),
+                        child: Center(child: CircularProgressIndicator()),
                       );
-                    },
-                  ),
-                ],
-              ),
+                    }
+
+                    if (snapshot.hasError) {
+                      return _ErrorState(message: snapshot.error.toString());
+                    }
+
+                    final data = snapshot.data;
+                    if (data == null) {
+                      return const _ErrorState(
+                        message: 'Waiting for live sensor payload from Firebase.',
+                      );
+                    }
+
+                    return TweenAnimationBuilder<double>(
+                      duration: const Duration(milliseconds: 650),
+                      curve: Curves.easeOutCubic,
+                      tween: Tween(begin: 0, end: 1),
+                      builder: (context, value, child) {
+                        return Opacity(
+                          opacity: value,
+                          child: Transform.translate(
+                            offset: Offset(0, (1 - value) * 12),
+                            child: child,
+                          ),
+                        );
+                      },
+                      child: _DashboardContent(data: data),
+                    );
+                  },
+                ),
+              ],
             ),
           ),
         ],
-      ),
-      floatingActionButton: FloatingActionButton.extended(
-        onPressed: () async => _reloadData(),
-        icon: const Icon(Icons.sync),
-        label: const Text('Refresh Data'),
       ),
     );
   }
@@ -195,7 +253,7 @@ class _DashboardContent extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final accent = _predictionColor(data.prediction);
+    final accent = _predictionColor(data.rainLevel);
 
     return Column(
       children: [
@@ -208,15 +266,15 @@ class _DashboardContent extends StatelessWidget {
     );
   }
 
-  static Color _predictionColor(String prediction) {
-    final normalized = prediction.toLowerCase();
-    if (normalized.contains('heavy')) {
-      return const Color(0xFF0E5D8A);
+  static Color _predictionColor(int rainLevel) {
+    switch (rainLevel) {
+      case 2:
+        return const Color(0xFF0E5D8A);
+      case 1:
+        return const Color(0xFF368DA6);
+      default:
+        return const Color(0xFF2E7C62);
     }
-    if (normalized.contains('light')) {
-      return const Color(0xFF368DA6);
-    }
-    return const Color(0xFF2E7C62);
   }
 }
 
@@ -254,7 +312,7 @@ class _StatusCard extends StatelessWidget {
                 _badge('Station A-01'),
                 const Spacer(),
                 Text(
-                  'Intensity ${data.rainIntensity.toStringAsFixed(2)}',
+                  'Intensity ${data.rainIntensity.toStringAsFixed(3)}',
                   style: textTheme.bodyMedium?.copyWith(
                     color: const Color(0xFF3C5063),
                     fontWeight: FontWeight.w600,
@@ -262,6 +320,15 @@ class _StatusCard extends StatelessWidget {
                 ),
               ],
             ),
+            if (data.createdAt.isNotEmpty) ...[
+              const SizedBox(height: 6),
+              Text(
+                'Updated ${data.createdAt}  •  Model v${data.modelVersion}',
+                style: textTheme.bodySmall?.copyWith(
+                  color: const Color(0xFF5D6A7A),
+                ),
+              ),
+            ],
             const SizedBox(height: 14),
             Row(
               children: [
@@ -274,7 +341,7 @@ class _StatusCard extends StatelessWidget {
                     color: Colors.white,
                     border: Border.all(color: accent.withValues(alpha: 0.22)),
                   ),
-                  child: Image.asset(_weatherImagePath(data.prediction)),
+                  child: Image.asset(_weatherImagePath(data.rainLevel)),
                 ),
                 const SizedBox(width: 14),
                 Expanded(
@@ -321,15 +388,15 @@ class _StatusCard extends StatelessWidget {
     );
   }
 
-  static String _weatherImagePath(String prediction) {
-    final normalized = prediction.toLowerCase();
-    if (normalized.contains('heavy')) {
-      return 'assets/images/rain.png';
+  static String _weatherImagePath(int rainLevel) {
+    switch (rainLevel) {
+      case 2:
+        return 'assets/images/rain.png';
+      case 1:
+        return 'assets/images/cloud.png';
+      default:
+        return 'assets/images/sun.png';
     }
-    if (normalized.contains('light')) {
-      return 'assets/images/cloud.png';
-    }
-    return 'assets/images/sun.png';
   }
 }
 
@@ -343,8 +410,11 @@ class _MetricGrid extends StatelessWidget {
     final metrics = [
       _MetricItem('Temperature', '${data.temperature.toStringAsFixed(1)} C', Icons.thermostat),
       _MetricItem('Humidity', '${data.humidity.toStringAsFixed(1)} %', Icons.water_drop),
-      _MetricItem('SNR', data.snr.toStringAsFixed(2), Icons.graphic_eq),
-      _MetricItem('Rain Intensity', data.rainIntensity.toStringAsFixed(2), Icons.grain),
+      _MetricItem('SNR Avg', data.snr.toStringAsFixed(2), Icons.graphic_eq),
+      _MetricItem('SNR Max', data.maxSnr.toString(), Icons.network_check),
+      _MetricItem('SNR Samples', data.snrSamples.toString(), Icons.scatter_plot),
+      _MetricItem('Rain Intensity', data.rainIntensity.toStringAsFixed(3), Icons.grain),
+      _MetricItem('Rain ADC', data.rainSensorAdc.toString(), Icons.speed),
     ];
 
     return LayoutBuilder(
@@ -520,9 +590,9 @@ class _TrendCard extends StatelessWidget {
 }
 
 class _ErrorState extends StatelessWidget {
-  const _ErrorState({required this.onRetry});
+  const _ErrorState({required this.message});
 
-  final Future<void> Function() onRetry;
+  final String message;
 
   @override
   Widget build(BuildContext context) {
@@ -543,15 +613,9 @@ class _ErrorState extends StatelessWidget {
             ),
             const SizedBox(height: 12),
             Text(
-              'Unable to load live data from station endpoint.',
+              message,
               textAlign: TextAlign.center,
               style: Theme.of(context).textTheme.bodyMedium,
-            ),
-            const SizedBox(height: 12),
-            FilledButton.icon(
-              onPressed: () => onRetry(),
-              icon: const Icon(Icons.refresh),
-              label: const Text('Retry'),
             ),
           ],
         ),

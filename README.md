@@ -91,8 +91,8 @@ Gnss-rainfall-detection-tinyML/
 │   ├── training_scripts/
 │   ├── model/
 │
-└── ui/
-    ├── dashboard/
+└── app/
+    ├── NimbusAI/
 
 ```
 ---
