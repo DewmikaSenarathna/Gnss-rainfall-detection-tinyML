@@ -46,22 +46,6 @@ Firebase local-only file (ignored by git):
 Template for onboarding:
 - android/app/google-services.json.example
 
-### Required Keys
-
-- FIREBASE_DATABASE_URL
-- SENSOR_API_ENDPOINTS
-
-Optional secret catalog keys (useful in CI/CD secret stores):
-- FIREBASE_PROJECT_ID
-- FIREBASE_API_KEY
-- FIREBASE_APP_ID
-- FIREBASE_MESSAGING_SENDER_ID
-
-Example:
-
-FIREBASE_DATABASE_URL=https://your-project-id-default-rtdb.region.firebasedatabase.app
-SENSOR_API_ENDPOINTS=http://192.168.1.100/data,http://192.168.4.1/data
-
 ## Run Locally
 
 1. Install dependencies:
