@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_database/firebase_database.dart';
 
+import '../config/app_config.dart';
 import '../models/sensor_data.dart';
 
 class DashboardScreen extends StatefulWidget {
@@ -15,8 +16,7 @@ class DashboardScreen extends StatefulWidget {
 }
 
 class _DashboardScreenState extends State<DashboardScreen> {
-  static const String _databaseUrl =
-      'https://rainfallprediction-945cd-default-rtdb.asia-southeast1.firebasedatabase.app';
+  static const String _databaseUrl = AppConfig.firebaseDatabaseUrl;
 
   late final DatabaseReference _ref =
       FirebaseDatabase.instanceFor(
@@ -24,28 +24,23 @@ class _DashboardScreenState extends State<DashboardScreen> {
         databaseURL: _databaseUrl,
       ).ref('RainData');
 
-  late final Stream<SensorData> _sensorStream =
+  late final Stream<SensorData?> _sensorStream =
       _ref.limitToLast(1).onValue.map(_mapEventToSensorData);
 
-  @override
-  void initState() {
-    super.initState();
-  }
-
-  SensorData _mapEventToSensorData(DatabaseEvent event) {
+  SensorData? _mapEventToSensorData(DatabaseEvent event) {
     final value = event.snapshot.value;
 
     if (value == null) {
-      throw Exception('No data found at RainData.');
+      return null;
     }
 
     if (value is! Map) {
-      throw Exception('Unexpected RainData format.');
+      return null;
     }
 
     final latest = _extractLatestRecord(_toStringKeyMap(value));
     if (latest == null) {
-      throw Exception('RainData contains no valid records.');
+      return null;
     }
 
     return SensorData.fromJson(latest);
@@ -64,10 +59,33 @@ class _DashboardScreenState extends State<DashboardScreen> {
       return rainData;
     }
 
+    final latestRaw = rainData['latest'];
+    if (latestRaw is Map) {
+      final latest = _toStringKeyMap(latestRaw);
+      if (_isRecordMap(latest)) {
+        return latest;
+      }
+    }
+
+    final historyRaw = rainData['history'];
+    if (historyRaw is Map) {
+      final history = _toStringKeyMap(historyRaw);
+      if (history.isNotEmpty) {
+        final keys = history.keys.toList()..sort();
+        final candidate = history[keys.last];
+        if (candidate is Map) {
+          final latest = _toStringKeyMap(candidate);
+          if (_isRecordMap(latest)) {
+            return latest;
+          }
+        }
+      }
+    }
+
     final records = <MapEntry<String, dynamic>>[];
     for (final entry in rainData.entries) {
       if (entry.value is Map) {
-        records.add(MapEntry(entry.key, entry.value));
+        records.add(entry);
       }
     }
 
@@ -75,21 +93,13 @@ class _DashboardScreenState extends State<DashboardScreen> {
       return null;
     }
 
-    records.sort((a, b) {
-      final aNum = int.tryParse(a.key);
-      final bNum = int.tryParse(b.key);
-      if (aNum != null && bNum != null) {
-        return aNum.compareTo(bNum);
-      }
-      return a.key.compareTo(b.key);
-    });
-
-    final latestRaw = records.last.value;
-    if (latestRaw is! Map) {
+    records.sort((a, b) => a.key.compareTo(b.key));
+    final raw = records.last.value;
+    if (raw is! Map) {
       return null;
     }
 
-    final latest = _toStringKeyMap(latestRaw);
+    final latest = _toStringKeyMap(raw);
     return _isRecordMap(latest) ? latest : null;
   }
 
@@ -111,7 +121,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
               children: [
                 const _Header(),
                 const SizedBox(height: 18),
-                StreamBuilder<SensorData>(
+                StreamBuilder<SensorData?>(
                   stream: _sensorStream,
                   builder: (context, snapshot) {
                     if (snapshot.connectionState == ConnectionState.waiting) {
@@ -122,7 +132,9 @@ class _DashboardScreenState extends State<DashboardScreen> {
                     }
 
                     if (snapshot.hasError) {
-                      return _ErrorState(message: snapshot.error.toString());
+                      return const _ErrorState(
+                        message: 'Waiting for live sensor payload from Firebase.',
+                      );
                     }
 
                     final data = snapshot.data;
@@ -310,14 +322,6 @@ class _StatusCard extends StatelessWidget {
                 _badge('Live'),
                 const SizedBox(width: 8),
                 _badge('Station A-01'),
-                const Spacer(),
-                Text(
-                  'Intensity ${data.rainIntensity.toStringAsFixed(3)}',
-                  style: textTheme.bodyMedium?.copyWith(
-                    color: const Color(0xFF3C5063),
-                    fontWeight: FontWeight.w600,
-                  ),
-                ),
               ],
             ),
             if (data.createdAt.isNotEmpty) ...[
@@ -349,12 +353,24 @@ class _StatusCard extends StatelessWidget {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
+                        'Rain Intensity',
+                        style: textTheme.bodyMedium?.copyWith(
+                          color: const Color(0xFF5D6A7A),
+                          letterSpacing: 0.3,
+                        ),
+                      ),
+                      const SizedBox(height: 4),
+                      Text(
                         data.prediction,
-                        style: textTheme.titleMedium?.copyWith(color: accent),
+                        style: textTheme.titleLarge?.copyWith(
+                          color: accent,
+                          fontWeight: FontWeight.w800,
+                          fontSize: 30,
+                        ),
                       ),
                       const SizedBox(height: 6),
                       Text(
-                        'Prediction validated from atmospheric sensor stream.',
+                        'Primary rainfall prediction from the live station stream.',
                         style: textTheme.bodyMedium?.copyWith(
                           color: const Color(0xFF5D6A7A),
                         ),
@@ -410,11 +426,9 @@ class _MetricGrid extends StatelessWidget {
     final metrics = [
       _MetricItem('Temperature', '${data.temperature.toStringAsFixed(1)} C', Icons.thermostat),
       _MetricItem('Humidity', '${data.humidity.toStringAsFixed(1)} %', Icons.water_drop),
-      _MetricItem('SNR Avg', data.snr.toStringAsFixed(2), Icons.graphic_eq),
       _MetricItem('SNR Max', data.maxSnr.toString(), Icons.network_check),
-      _MetricItem('SNR Samples', data.snrSamples.toString(), Icons.scatter_plot),
-      _MetricItem('Rain Intensity', data.rainIntensity.toStringAsFixed(3), Icons.grain),
-      _MetricItem('Rain ADC', data.rainSensorAdc.toString(), Icons.speed),
+      _MetricItem('Rain Value', data.rainSensorAdc.toString(), Icons.speed),
+      _MetricItem('Rain Intensity', data.prediction, Icons.grain),
     ];
 
     return LayoutBuilder(
@@ -437,6 +451,7 @@ class _MetricGrid extends StatelessWidget {
       },
     );
   }
+
 }
 
 class _MetricCard extends StatelessWidget {
@@ -576,14 +591,19 @@ class _TrendCard extends StatelessWidget {
   }
 
   List<FlSpot> _buildSpots(SensorData data) {
-    final base = math.max(0.2, data.rainIntensity);
-    final humidityFactor = (data.humidity / 100).clamp(0.3, 1.0);
-    final snrFactor = (data.snr / 20).clamp(0.2, 1.2);
+    final base = switch (data.rainLevel) {
+      2 => 2.4,
+      1 => 1.4,
+      _ => 0.7,
+    };
+
+    final humidityEffect = ((data.humidity - 40) / 60).clamp(0.0, 1.0) * 0.8;
+    final snrEffect = (data.maxSnr / 50).clamp(0.0, 1.0) * 0.7;
 
     return List<FlSpot>.generate(6, (index) {
-      final wave = math.sin(index * 0.9) * 0.35;
-      final trend = index * 0.15;
-      final y = base * humidityFactor * snrFactor + wave + trend;
+      final wave = math.sin(index * 0.95) * 0.22;
+      final trend = index * 0.18;
+      final y = (base + humidityEffect + snrEffect + wave + trend).clamp(0.2, 5.0);
       return FlSpot(index.toDouble(), y);
     });
   }
