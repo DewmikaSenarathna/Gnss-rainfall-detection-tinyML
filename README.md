@@ -1,11 +1,15 @@
 <p align="center">
-    <img src="docs/imgs/Logo.jpeg" alt="NimbusAI Logo" width="180" />
+  <img src="docs/imgs/Logo.png" width="180" alt="NimbusAI Logo">
 </p>
 
-# NimbusAI
+<h1 align="center">NimbusAI</h1>
 
-## Project Title
-Rainfall Detection and Short-Term Prediction using GNSS and TinyML
+<p align="center">
+  <strong>Rainfall Detection and Short-Term Prediction using GNSS and TinyML</strong><br>
+  Electronics and Computer Engineering, Hardware-Software Integrated Embedded System
+</p>
+
+---
 
 ![Project Name](https://img.shields.io/badge/Project%20Name-NimbusAI-0A66C2?style=for-the-badge&logo=target&logoColor=white)
 ![Project](https://img.shields.io/badge/Project-EC6020%20Mini%20Project-1E40AF?style=for-the-badge&logo=google-scholar&logoColor=white)
@@ -15,11 +19,6 @@ Rainfall Detection and Short-Term Prediction using GNSS and TinyML
 ![App](https://img.shields.io/badge/App-Flutter-02569B?style=for-the-badge&logo=flutter&logoColor=white)
 ![Status](https://img.shields.io/badge/Status-Work%20in%20Progress-CA8A04?style=for-the-badge&logo=clockify&logoColor=white)
 
-## Academic Context
-**Degree Program:** Electronics and Computer Engineering
-**Project Type:** Hardware-Software Integrated Embedded System
-
----
 <br>
 
 
@@ -88,30 +87,31 @@ The repository is organized to clearly separate **documentation**, **hardware de
 
 ```text
 Gnss-rainfall-detection-tinyML/
-|
-|-- README.md
-|-- docs/
-|   |-- imgs/
-|   |-- pdfs/
-|   `-- presentations/
-|
-|-- hardware/
-|   |-- Gerber_Embeded-PCB_PCB_Embeded-PCB/
-|   `-- pcb/
-|
-|-- firmware/
-|   |-- Arduino/
-|   |-- stm32_code/
-|   `-- Tests/
-|
-|-- ml/
-|   |-- dataset/
-|   |-- training_scripts/
-|   |-- model/
-|   `-- testing/
-|
-`-- app/
-    `-- NimbusAI/
+│
+├── docs/
+│   ├── pdfs/
+│   ├── imgs/
+│   └── presentations/
+│
+├── hardware/
+│   └──Gerber_Embeded-PCB_PCB_Embeded-PCB/
+│
+├── firmware/
+│   ├── Arduino/
+│   ├── Tests/
+│   └── stm32_code/
+│
+├── ml/
+│   ├── dataset/
+│   ├── training_scripts/
+│   ├── testing/
+│   └── model/
+│ 
+├── app/
+│   └── NimbusAI/
+│ 
+├── README.md
+└── .gitignore
 ```
 
 ---
@@ -134,8 +134,15 @@ Gnss-rainfall-detection-tinyML/
 
 Complete circuit artifacts are available in the hardware folder:
 
-- Schematic: [hardware/Gerber_Embeded-PCB_PCB_Embeded-PCB/Schematic_Embeded-PCB_2026-03-23.pdf](hardware/Gerber_Embeded-PCB_PCB_Embeded-PCB/Schematic_Embeded-PCB_2026-03-23.pdf)
-- PCB layout: [hardware/Gerber_Embeded-PCB_PCB_Embeded-PCB/PCB_PCB_Embeded-PCB_2026-03-23.pdf](hardware/Gerber_Embeded-PCB_PCB_Embeded-PCB/PCB_PCB_Embeded-PCB_2026-03-23.pdf)
+- Schematic:
+<p align="center">
+  <img src="docs/imgs/Schematic_Embeded-PCB.png" width="180" alt="Schematic diagram">
+</p>
+
+- PCB layout: 
+<p align="center">
+  <img src="docs/imgs/PCB_PCB_Embeded-PCB.png" width="180" alt="PCB layout">
+</p>
 
 ---
 <br>
@@ -143,7 +150,7 @@ Complete circuit artifacts are available in the hardware folder:
 
 ## 💻 Software and Tools
 
-- **Embedded Development:** STM32CubeIDE, Embedded C/C++
+- **Embedded Development:** STM32CubeIDE, STM32CubeProgrammer, Embedded C/C++
 - **Machine Learning:** Python, NumPy, Pandas, Scikit-learn
 - **TinyML:** TensorFlow Lite for Microcontrollers
 - **Mobile Application:** Flutter (NimbusAI)
