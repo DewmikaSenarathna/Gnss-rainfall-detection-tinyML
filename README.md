@@ -1,13 +1,21 @@
-# Rainfall Detection and Short-Term Prediction using GNSS and TinyML
+<p align="center">
+    <img src="docs/imgs/Logo.jpeg" alt="NimbusAI Logo" width="180" />
+</p>
 
-![Project](https://img.shields.io/badge/Project-EC6020%20Mini%20Project-0A66C2?style=for-the-badge&logo=google-scholar&logoColor=white)
+# NimbusAI
+
+## Project Title
+Rainfall Detection and Short-Term Prediction using GNSS and TinyML
+
+![Project Name](https://img.shields.io/badge/Project%20Name-NimbusAI-0A66C2?style=for-the-badge&logo=target&logoColor=white)
+![Project](https://img.shields.io/badge/Project-EC6020%20Mini%20Project-1E40AF?style=for-the-badge&logo=google-scholar&logoColor=white)
 ![Program](https://img.shields.io/badge/Program-Electronics%20%26%20Computer%20Engineering-1D4ED8?style=for-the-badge&logo=bookstack&logoColor=white)
 ![TinyML](https://img.shields.io/badge/TinyML-TensorFlow%20Lite-F57C00?style=for-the-badge&logo=tensorflow&logoColor=white)
 ![Embedded](https://img.shields.io/badge/Embedded-STM32-0B132A?style=for-the-badge&logo=stmicroelectronics&logoColor=white)
 ![App](https://img.shields.io/badge/App-Flutter-02569B?style=for-the-badge&logo=flutter&logoColor=white)
 ![Status](https://img.shields.io/badge/Status-Work%20in%20Progress-CA8A04?style=for-the-badge&logo=clockify&logoColor=white)
 
-## 🎓 EC6020 - Mini Project
+## Academic Context
 **Degree Program:** Electronics and Computer Engineering
 **Project Type:** Hardware-Software Integrated Embedded System
 
