@@ -122,37 +122,25 @@ These parameters collectively describe the physical interaction between GNSS sig
 
 `gamma = a * R^b`
 
-<br>
-
 ### 2. Total Attenuation
 
 `A = gamma * Lp`
-
-<br>
 
 ### 3. SNR (Linear Form)
 
 `SNR = Pr / N`
 
-<br>
-
 ### 4. SNR (dB Form)
 
 `SNR(dB) = Pr(dB) - N(dB)`
-
-<br>
 
 ### 5. Received Power
 
 `Pr = Pt - A`
 
-<br>
-
 ### 6. Combined Model (Rain -> SNR)
 
 `SNR = Pt - (a * R^b * Lp) - N`
-
-<br>
 
 ### 7. Extended Model (Temperature and Humidity)
 
@@ -346,7 +334,7 @@ Complete circuit artifacts are available in the hardware folder:
 ### Schematic Design
 
 <p align="center">
-  <img src="docs/imgs/Schematic_Embeded-PCB.png" width="400" alt="Schematic diagram" />
+  <img src="docs/imgs/Schematic_Embeded-PCB.png" width="600" alt="Schematic diagram" />
 </p>
 
 <br>
@@ -354,7 +342,7 @@ Complete circuit artifacts are available in the hardware folder:
 ### PCB Design
 
 <p align="center">
-  <img src="docs/imgs/PCB_PCB_Embeded-PCB.png" width="400" alt="PCB layout" />
+  <img src="docs/imgs/PCB_PCB_Embeded-PCB.png" width="600" alt="PCB layout" />
 </p>
 
 <br>
@@ -362,7 +350,7 @@ Complete circuit artifacts are available in the hardware folder:
 ### Final Design
 
 <p align="center">
-  <img src="docs/imgs/Final PCB Design.jpg" width="400" alt="NimbusAI Final PCB Design" />
+  <img src="docs/imgs/Final PCB Design.jpg" width="600" alt="NimbusAI Final PCB Design" />
 </p>
 
 ---
