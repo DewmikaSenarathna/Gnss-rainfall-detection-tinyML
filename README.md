@@ -213,8 +213,8 @@ Complete circuit artifacts are available in the hardware folder:
 This project is developed by a **5-member team** as part of the **EC6020 Mini Project**.
 Team roles (hardware design, firmware development, ML modeling, UI development, documentation) are clearly defined in the project documentation.
 
-| Name | Role |
-|---|---|
+| Member | Role | Name |
+|---|---|---|
 | Member 1 | Team Lead |Kumari H.A.R. |
 | Member 2 | Firmware Engineer | Senarath S.M.D.P. |
 | Member 3 | ML Engineer |Senarathna S.A.D.H.D. |
