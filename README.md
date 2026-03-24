@@ -80,39 +80,44 @@ The system performs **real-time inference at the edge**, without requiring cloud
 ---
 <br>
 
-##📡 Theoretical Background: Rain Intensity vs SNR
-Specific Attenuation:
+## 🎓 Theoretical Background: Rain Intensity vs SNR
+
+### 1. Specific Attenuation
 γ = a R^b
 
-Total Attenuation:
+### 2. Total Attenuation
 A = γ × Lp
 
-SNR (linear form):
+### 3. SNR (Linear Form)
 SNR = Pr / N
 
-SNR (dB form):
+### 4. SNR (dB Form)
 SNR(dB) = Pr(dB) − N(dB)
 
-Received Power:
+### 5. Received Power
 Pr = Pt − A
 
-Combined Model (Rain → SNR):
+### 6. Combined Model (Rain → SNR)
 SNR = Pt − (a R^b Lp) − N
 
-Extended Model (with Temperature & Humidity):
+### 7. Extended Model (Temperature & Humidity)
 SNR = Pt − (a R^b Lp + αT + βH) − N
 
-γ  = specific attenuation (dB/km)
-R  = rain intensity (mm/h)
-a, b = constants (frequency & polarization dependent)
-A  = total attenuation (dB)
-Lp = path length (km)
-Pt = transmitted power (dB)
-Pr = received power (dB)
-N  = noise power (dB)
-T  = temperature
-H  = humidity
-α, β = environmental coefficients
+---
+
+### 📌 Variables
+
+γ  = specific attenuation (dB/km)  
+R  = rain intensity (mm/h)  
+a, b = constants (frequency & polarization dependent)  
+A  = total attenuation (dB)  
+Lp = path length (km)  
+Pt = transmitted power (dB)  
+Pr = received power (dB)  
+N  = noise power (dB)  
+T  = temperature  
+H  = humidity  
+α, β = environmental coefficients  
 
 ---
 <br>
