@@ -265,10 +265,10 @@ Team roles (hardware design, firmware development, ML modeling, UI development, 
 | Member | Role | Name |
 |---|---|---|
 | Member 1 | Team Lead |Kumari H.A.R. |
-| Member 2 | Firmware Engineer | Senarath S.M.D.P. |
-| Member 3 | ML Engineer |Senarathna S.A.D.H.D. |
+| Member 2 | Firmware Engineer |Senarath S.M.D.P. |
+| Member 3 | ML Engineer |Patabadige M.P.H.R.|
 | Member 4 | Hardware Engineer |Galahitiyawa G.R.M.M. |
-| Member 5 | App and Documentation Engineer | Patabadige M.P.H.R. |
+| Member 5 | App and Documentation Engineer |Senarathna S.A.D.H.D. |
 
 | Name | Role |
 |---|---|
