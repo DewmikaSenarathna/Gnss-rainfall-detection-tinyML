@@ -31,8 +31,7 @@ migrate_working_dir/
 .pub-cache/
 .pub/
 /build/
-**/build/
-/coverage/
+
 
 # Symbolication related
 app.*.symbols
@@ -45,16 +44,6 @@ app.*.map.json
 /android/app/profile
 /android/app/release
 
-# Embedded and native build artifacts
-**/Debug/
-**/Release/
-*.elf
-*.hex
-*.bin
-*.map
-
-# Notebook checkpoints
-**/.ipynb_checkpoints/
 
 # Environment files
 .env
