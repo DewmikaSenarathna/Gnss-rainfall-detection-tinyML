@@ -41,12 +41,54 @@ class SensorData {
       rainIntensity: _readDouble(
         json['rain_intensity'] ?? json['rainValue'] ?? json['rain_sensor'],
       ),
-      rainSensorAdc: _readInt(json['rain_sensor_adc'] ?? json['rain_adc']),
+      rainSensorAdc: _readRainSensorAdc(json),
       rainLevel: rainLevel,
       prediction: prediction,
       modelVersion: _readInt(json['model_version'] ?? json['modelVersion']),
       createdAt: _readString(json['created_at'] ?? json['createdAt']),
     );
+  }
+
+  static int _readRainSensorAdc(Map<String, dynamic> json) {
+    // Prefer direct rain sensor value keys first for faster and fresher updates.
+    final preferred = [
+      json['rainValue'],
+      json['rain_sensor'],
+      json['rain_sensor_adc'],
+      json['rain_adc'],
+    ];
+
+    for (final value in preferred) {
+      final parsed = _readInt(value);
+      if (value != null || parsed != 0) {
+        return parsed;
+      }
+    }
+
+    return 0;
+  }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'temperature': temperature,
+      'humidity': humidity,
+      'snr': snr,
+      'maxSNR': maxSnr,
+      'snrSamples': snrSamples,
+      'rain_intensity': rainIntensity,
+      'rain_sensor_adc': rainSensorAdc,
+      'rainLevel': rainLevel,
+      'prediction': prediction,
+      'model_version': modelVersion,
+      'created_at': createdAt,
+    };
+  }
+
+  String get createdAtOrNow {
+    if (createdAt.trim().isNotEmpty) {
+      return createdAt;
+    }
+    return DateTime.now().toIso8601String();
   }
 
   static double _readDouble(dynamic value) {
