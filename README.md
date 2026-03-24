@@ -80,6 +80,43 @@ The system performs **real-time inference at the edge**, without requiring cloud
 ---
 <br>
 
+##📡 Theoretical Background: Rain Intensity vs SNR
+Specific Attenuation:
+γ = a R^b
+
+Total Attenuation:
+A = γ × Lp
+
+SNR (linear form):
+SNR = Pr / N
+
+SNR (dB form):
+SNR(dB) = Pr(dB) − N(dB)
+
+Received Power:
+Pr = Pt − A
+
+Combined Model (Rain → SNR):
+SNR = Pt − (a R^b Lp) − N
+
+Extended Model (with Temperature & Humidity):
+SNR = Pt − (a R^b Lp + αT + βH) − N
+
+γ  = specific attenuation (dB/km)
+R  = rain intensity (mm/h)
+a, b = constants (frequency & polarization dependent)
+A  = total attenuation (dB)
+Lp = path length (km)
+Pt = transmitted power (dB)
+Pr = received power (dB)
+N  = noise power (dB)
+T  = temperature
+H  = humidity
+α, β = environmental coefficients
+
+---
+<br>
+
 
 ## 📂 Repository Structure
 
