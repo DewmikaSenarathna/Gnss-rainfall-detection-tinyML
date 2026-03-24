@@ -215,11 +215,11 @@ Team roles (hardware design, firmware development, ML modeling, UI development, 
 
 | Name | Role |
 |---|---|
-| Member 1 | Team Lead |
-| Member 2 | Firmware Engineer |
-| Member 3 | ML Engineer |
-| Member 4 | Hardware Engineer |
-| Member 5 | App and Documentation Engineer |
+| Member 1 | Team Lead |Kumari H.A.R. |
+| Member 2 | Firmware Engineer | Senarath S.M.D.P. |
+| Member 3 | ML Engineer |Senarathna S.A.D.H.D. |
+| Member 4 | Hardware Engineer |Galahitiyawa G.R.M.M. |
+| Member 5 | App and Documentation Engineer | Patabadige M.P.H.R. |
 
 | Name | Role |
 |---|---|
