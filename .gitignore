@@ -50,6 +50,24 @@ app.*.map.json
 .env.local
 .env.*.local
 
+# Keep all real env files private anywhere in the repo
+**/.env
+**/.env.*
+!**/.env.example
+!**/.env.template
+
 # Firebase secret config files
 android/app/google-services.json
 ios/Runner/GoogleService-Info.plist
+
+# Firebase mobile config files at any depth
+**/google-services.json
+**/GoogleService-Info.plist
+
+# Common credential and key material
+*.pem
+*.key
+*.p12
+*.jks
+*.keystore
+*.mobileprovision
