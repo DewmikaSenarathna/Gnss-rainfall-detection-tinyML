@@ -1,7 +1,7 @@
 # NimbusAI ML Module
 
 <p align="center">
-  <img src="docs/imgs/Logo.png" alt="NimbusAI Logo" width="400" />
+  <img src="/docs/imgs/Logo.png" alt="NimbusAI Logo" width="400" />
 </p>
 
 <p align="center">
