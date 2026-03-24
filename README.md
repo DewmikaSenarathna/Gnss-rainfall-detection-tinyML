@@ -245,6 +245,13 @@ Complete circuit artifacts are available in the hardware folder:
 5. NumPy documentation: https://numpy.org/doc/
 6. pandas documentation: https://pandas.pydata.org/docs/
 7. scikit-learn documentation: https://scikit-learn.org/stable/
+8. Alozie et al., “Rain Signal Attenuation Modeling,” Sustainability, 2022. https://doi.org/10.3390/su141811744
+9. ITU-R P.838-3, Rain Attenuation Model. https://www.itu.int/rec/R-REC-P.838
+10. ITU-R P.530-17, Propagation Prediction Methods. https://www.itu.int/rec/R-REC-P.530
+12. Appuhamilage et al., Impact of temperature and humidity on SINR in LTE networks, 2025:https://doi.org/10.59324/ejaset.2025.3(2).09
+13. Hao and Lu, Variation of relative humidity and air temperature, 2022:https://doi.org/10.3390/atmos13081171
+14. Romps, Analytical model for tropical relative humidity, 2014:https://doi.org/10.1175/JCLI-D-14-00255.1
+15. Agbo and Edet, Meteorological analysis of climatic parameters, 2021: https://doi.org/10.1007/s00704-022-04226-x
 
 ---
 <br>
