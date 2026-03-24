@@ -103,8 +103,6 @@ SNR = Pt − (a R^b Lp) − N
 ### 7. Extended Model (Temperature & Humidity)
 SNR = Pt − (a R^b Lp + αT + βH) − N
 
----
-
 ### 📌 Variables
 
 γ  = specific attenuation (dB/km)  
