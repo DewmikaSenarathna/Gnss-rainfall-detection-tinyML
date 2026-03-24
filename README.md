@@ -1,7 +1,7 @@
 # Rainfall Detection and Short-Term Prediction using GNSS and TinyML
 
 <p align="center">
-  <img src="docs/imgs/Logo.png" alt="NimbusAI Logo" width="40" />
+  <img src="docs/imgs/Logo.png" alt="NimbusAI Logo" width="400" />
 </p>
 
 <h2 align="center">NimbusAI</h2>
@@ -118,42 +118,48 @@ Based on literature review and theoretical understanding, several environmental 
 
 These parameters collectively describe the physical interaction between GNSS signals and atmospheric conditions, particularly during rainfall events.
 
-<br>
 ### 1. Specific Attenuation
 
 `gamma = a * R^b`
 
 <br>
+
 ### 2. Total Attenuation
 
 `A = gamma * Lp`
 
 <br>
+
 ### 3. SNR (Linear Form)
 
 `SNR = Pr / N`
 
 <br>
+
 ### 4. SNR (dB Form)
 
 `SNR(dB) = Pr(dB) - N(dB)`
 
 <br>
+
 ### 5. Received Power
 
 `Pr = Pt - A`
 
 <br>
+
 ### 6. Combined Model (Rain -> SNR)
 
 `SNR = Pt - (a * R^b * Lp) - N`
 
 <br>
+
 ### 7. Extended Model (Temperature and Humidity)
 
 `SNR = Pt - (a * R^b * Lp + alpha*T + beta*H) - N`
 
 <br>
+
 ### 📌 Variables
 
 - `gamma` = specific attenuation (dB/km)
