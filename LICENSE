@@ -1,21 +1,28 @@
-MIT License
+NimbusAI Academic License (NAL) v1.0
+© 2026 NimbusAI Project Team. All rights reserved.
 
-Copyright (c) 2026 Don Dew
+This project is developed as part of an academic requirement (EC6020 – Embedded Systems).
 
-Permission is hereby granted, free of charge, to any person obtaining a copy
-of this software and associated documentation files (the "Software"), to deal
-in the Software without restriction, including without limitation the rights
-to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-copies of the Software, and to permit persons to whom the Software is
-furnished to do so, subject to the following conditions:
+Permission is hereby granted to view and study this repository for educational and research purposes only, under the following conditions:
 
-The above copyright notice and this permission notice shall be included in all
-copies or substantial portions of the Software.
+1. Attribution Required  
+   Any use of this work must give proper credit to the original authors (NimbusAI Project Team).
 
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-SOFTWARE.
+2. No Academic Misconduct  
+   This project, in whole or in part, must NOT be copied or presented as original work by any other student or individual for academic evaluation.
+
+3. No Unauthorized Modification for Submission  
+   Modifying, enhancing or extending this project and submitting it as independent academic work is strictly prohibited.
+
+4. Non-Commercial Use Only  
+   This project may not be used for commercial purposes without explicit written permission from the authors.
+
+5. Proof of Ownership  
+   All development history, commits and timestamps in this repository serve as official proof of authorship.
+
+6. No Warranty  
+   This software is provided "as is", without warranty of any kind.
+
+Violation of these terms may result in academic disciplinary action and/or legal consequences.
+
+For permissions beyond this license, contact the project authors.
